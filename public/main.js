@@ -4952,7 +4952,7 @@ var Fetch = /*#__PURE__*/function () {
   }, {
     key: "postImage",
     value: function postImage(formdata) {
-      return this.createRequest('', 'text', {
+      return this.createRequest('/images', 'text', {
         method: 'POST',
         body: formdata
       });
@@ -4960,14 +4960,14 @@ var Fetch = /*#__PURE__*/function () {
   }, {
     key: "getImageLinks",
     value: function getImageLinks() {
-      return this.createRequest('/images?method=getLinks', 'json', {
+      return this.createRequest('/images', 'json', {
         method: 'GET'
       });
     }
   }, {
     key: "deleteImage",
     value: function deleteImage(filename) {
-      return this.createRequest('/images?filename=' + filename, 'json', {
+      return this.createRequest('/images/' + filename, 'json', {
         method: 'DELETE',
         body: filename
       });
