@@ -5087,7 +5087,7 @@ var ImageManager_ImageManager = /*#__PURE__*/function () {
   }, {
     key: "insertImage",
     value: function insertImage(filename) {
-      var src = "".concat(Fetch.url, "/").concat(filename);
+      var src = "".concat(Fetch.url, "/images/").concat(filename);
       var imgBlock = document.createElement('div');
       imgBlock.className = 'image_wrapper';
       var img = document.createElement('img');
