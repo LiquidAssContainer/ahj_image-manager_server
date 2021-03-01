@@ -20,7 +20,7 @@ app.use(async (ctx, next) => {
     return await next();
   }
 
-  const headers = { 'Access-Control-Allow-Origin': '*' }; // пусть так и будет
+  const headers = { 'Access-Control-Allow-Origin': '*' };
 
   if (ctx.request.method !== 'OPTIONS') {
     ctx.response.set({ ...headers });
@@ -56,22 +56,19 @@ app.use(
 );
 
 router.get('/images', async (ctx, next) => {
-  const { method } = ctx.query;
-  if (method === 'getLinks') {
-    const imgLinks = [];
-    filenames = fs.readdirSync(imagesDirPath);
-    for (const file of filenames) {
-      if (/\.(jpe?g|png|gif)$/.test(file)) {
-        imgLinks.push(file);
-      }
+  const imgLinks = [];
+  filenames = fs.readdirSync(imagesDirPath);
+  for (const file of filenames) {
+    if (/\.(jpe?g|png|gif)$/.test(file)) {
+      imgLinks.push(file);
     }
-    ctx.body = imgLinks;
   }
+  ctx.body = imgLinks;
   return await next();
 });
 
-router.del('/images', async (ctx, next) => {
-  const { filename } = ctx.query;
+router.del('/images/:filename', async (ctx, next) => {
+  const { filename } = ctx.params;
   const filePath = `${imagesDirPath}/${filename}`;
   try {
     await fs.unlinkSync(filePath);
@@ -82,22 +79,14 @@ router.del('/images', async (ctx, next) => {
   return await next();
 });
 
-app.use(router.routes()).use(router.allowedMethods());
-
-app.use(serve(publicDirPath));
-
-app.use(async (ctx) => {
-  if (ctx.request.method !== 'POST') {
-    return;
-  }
-
+router.post('/images', async (ctx, next) => {
   const { file } = ctx.request.files;
   const { type } = file;
 
   // мб костыльно
   if (!/^image\//.test(type)) {
     ctx.response.body = { success: false, message: 'Файл не является изображением' };
-    return;
+    return await next();
   }
 
   // скопировано почти без изменений
@@ -125,8 +114,11 @@ app.use(async (ctx) => {
   });
 
   ctx.response.body = link;
-  return;
+  return await next();
 });
+
+app.use(router.routes()).use(router.allowedMethods());
+app.use(serve(publicDirPath));
 
 const port = process.env.PORT || 7070;
 http.createServer(app.callback()).listen(port);
