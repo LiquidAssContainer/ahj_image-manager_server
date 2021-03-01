@@ -6,12 +6,19 @@ const koaBody = require('koa-body');
 const uuid = require('uuid');
 const serve = require('koa-static');
 const Router = require('@koa/router');
+const cors = require('koa-cors');
 
 const app = new Koa();
 const router = new Router();
 
 const publicDirPath = path.join(__dirname, '/public');
 const imagesDirPath = path.join(publicDirPath, '/images');
+
+const options = {
+  origin: '*',
+};
+
+app.use(cors(options));
 
 // скопировано из репозитория Нетологии без изменений
 app.use(async (ctx, next) => {
